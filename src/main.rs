@@ -17,7 +17,7 @@ fn main() {
 
     // println!("{}", args.name);
 
-    println!("{}", gen_password(10));
+    println!("{}", gen_password(16));
 }
 
 
@@ -52,6 +52,9 @@ fn get_letter_space() -> Vec<char> {
     for n in '0' as u8 .. '9' as u8 + 1 {
         letters.push(n as char);
     }
+
+    let mut special_chars = vec!['!', '#', '$', '%', '&', '*', ']', '[', '(', ')', '{', '}', '+', '-'];
+    letters.append(&mut special_chars);
 
     letters
 }
