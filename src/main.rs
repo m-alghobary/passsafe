@@ -3,7 +3,6 @@ use rand::distributions::Uniform;
 use rand::{Rng, RngCore, SeedableRng};
 use rand::rngs::StdRng;
 
-
 /// Generate & store your passwords safely
 #[derive(Parser)]
 struct Args {
@@ -23,6 +22,23 @@ fn main() {
 
 
 fn gen_password(len: usize) -> String {
+    let letters = get_letter_space();
+    let distrib = Uniform::new(0, letters.len());
+    
+    let mut seed = [0u8; 32];
+    rand::thread_rng().fill_bytes(&mut seed);
+    let mut rng = StdRng::from_seed(seed);
+    
+    let mut result = vec![];
+    for _ in 0..len {
+        result.push(letters[rng.sample(distrib)]);
+    }
+
+    result.into_iter().collect()
+}
+
+
+fn get_letter_space() -> Vec<char> {
     let mut letters: Vec<char> = vec![];
 
     for ch in 'a' as u8 .. 'z' as u8 + 1 {
@@ -37,19 +53,5 @@ fn gen_password(len: usize) -> String {
         letters.push(n as char);
     }
 
-    let mut result = vec![];
-
-    let length = letters.len();
-    let mut seed = [0u8; 32];
-    rand::thread_rng().fill_bytes(&mut seed);
-
-    let mut rng = StdRng::from_seed(seed);
-
-    let range = Uniform::new(0, length);
-
-    for _ in 0..len {
-        result.push(letters[rng.sample(range)]);
-    }
-
-    result.into_iter().collect()
+    letters
 }
