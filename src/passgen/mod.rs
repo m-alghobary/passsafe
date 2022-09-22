@@ -2,17 +2,16 @@ use rand::distributions::Uniform;
 use rand::rngs::StdRng;
 use rand::{Rng, RngCore, SeedableRng};
 
+
 pub struct PassGenerator {
     len: usize
 }
-
 
 impl PassGenerator {
     
     pub fn new(len: usize) -> Self {
         Self { len }
     }
-
 
     pub fn gen_password(&self) -> String {
         let letters = self.get_letter_space();
