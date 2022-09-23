@@ -1,8 +1,7 @@
-use std::{fs::OpenOptions, io::Write, path::Path};
-
-use crate::passgen::PassGenerator;
+use crate::{passfile::PassFile, passgen::PassGenerator};
 use clap::Parser;
 
+mod passfile;
 mod passgen;
 
 /// Generate & store your passwords safely
@@ -36,6 +35,7 @@ pub struct Args {
 fn main() -> std::io::Result<()> {
     let args = Args::parse();
     let gen = PassGenerator::new(&args);
+    let pass_file = PassFile::new();
 
     let mut password;
     loop {
@@ -45,7 +45,7 @@ fn main() -> std::io::Result<()> {
         println!("Pass: {}", password);
 
         if !re_generate() {
-            save_to_file(&args.name, &password)?;
+            pass_file.write_pass(&args.name, &password)?;
             break;
         }
     }
@@ -70,15 +70,4 @@ fn re_generate() -> bool {
         .expect("Failed to read input!");
 
     answer.trim().to_lowercase().eq("y")
-}
-
-fn save_to_file(name: &String, password: &String) -> std::io::Result<()> {
-    let pass_buf = String::from(format!("{0}: {1}\n", name, password));
-
-    let path = Path::new("./passsafe");
-    let mut file = OpenOptions::new().append(true).create(true).open(path)?;
-
-    file.write_all(&pass_buf.as_bytes())?;
-
-    Ok(())
 }
