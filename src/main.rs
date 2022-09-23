@@ -1,3 +1,5 @@
+use std::{fs::OpenOptions, io::Write, path::Path};
+
 use crate::passgen::PassGenerator;
 use clap::Parser;
 
@@ -31,7 +33,7 @@ pub struct Args {
     no_special_chars: bool,
 }
 
-fn main() {
+fn main() -> std::io::Result<()> {
     let args = Args::parse();
     let gen = PassGenerator::new(&args);
 
@@ -43,6 +45,7 @@ fn main() {
         println!("Pass: {}", password);
 
         if !re_generate() {
+            save_to_file(&args.name, &password)?;
             break;
         }
     }
@@ -50,6 +53,8 @@ fn main() {
     println!("");
     println!("Name: {}", args.name);
     println!("Pass: {}", password);
+
+    Ok(())
 }
 
 // Utils
@@ -65,4 +70,15 @@ fn re_generate() -> bool {
         .expect("Failed to read input!");
 
     answer.trim().to_lowercase().eq("y")
+}
+
+fn save_to_file(name: &String, password: &String) -> std::io::Result<()> {
+    let pass_buf = String::from(format!("{0}: {1}\n", name, password));
+
+    let path = Path::new("./passsafe");
+    let mut file = OpenOptions::new().append(true).create(true).open(path)?;
+
+    file.write_all(&pass_buf.as_bytes())?;
+
+    Ok(())
 }
