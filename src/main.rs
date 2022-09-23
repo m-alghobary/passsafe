@@ -1,12 +1,11 @@
-use clap::Parser;
 use crate::passgen::PassGenerator;
+use clap::Parser;
 
 mod passgen;
 
-
 /// Generate & store your passwords safely
 #[derive(Parser, Debug, Default)]
-struct Args {
+pub struct Args {
     /// Name of the app this password is for
     #[clap(short, long, value_parser)]
     name: String,
@@ -18,7 +17,7 @@ struct Args {
     /// No uppercase letters
     #[clap(long, value_parser)]
     no_upper: bool,
-    
+
     /// No lowercase letters
     #[clap(long, value_parser)]
     no_lower: bool,
@@ -32,12 +31,10 @@ struct Args {
     no_special_chars: bool,
 }
 
-
 fn main() {
     let args = Args::parse();
-    let gen = PassGenerator::new(16);
+    let gen = PassGenerator::new(&args);
 
-    
     let mut password;
     loop {
         password = gen.gen_password();
@@ -54,7 +51,6 @@ fn main() {
     println!("Name: {}", args.name);
     println!("Pass: {}", password);
 }
-
 
 // Utils
 
