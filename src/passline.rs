@@ -1,7 +1,7 @@
 #[derive(Debug, Default)]
 pub struct Passline {
-    name: String,
-    pass: String,
+    pub name: String,
+    pub pass: String,
 }
 
 impl Passline {

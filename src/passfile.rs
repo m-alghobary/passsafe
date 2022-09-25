@@ -1,4 +1,8 @@
-use std::{fs::OpenOptions, io::Write, path::Path};
+use std::{
+    fs::OpenOptions,
+    io::{BufRead, Write},
+    path::Path,
+};
 
 use crate::Passline;
 
@@ -22,5 +26,28 @@ impl PassFile {
         file.write_all(&formatted_line.as_bytes())?;
 
         Ok(())
+    }
+
+    pub fn pass_line_exist(&self, pass_name: &String) -> std::io::Result<bool> {
+        let path = Path::new(&self.path);
+
+        if !path.exists() {
+            return Ok(false);
+        }
+
+        let pass_file = std::fs::File::open(path)?;
+        let file_reader = std::io::BufReader::new(pass_file);
+
+        let mut exist = false;
+        for line in file_reader.lines() {
+            let line = line.unwrap_or_default();
+
+            if line.starts_with(pass_name) {
+                exist = true;
+                break;
+            }
+        }
+
+        Ok(exist)
     }
 }
