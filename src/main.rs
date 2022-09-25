@@ -32,6 +32,28 @@ pub struct Args {
     no_special_chars: bool,
 }
 
+#[derive(Debug, Default)]
+pub struct Passline {
+    name: String,
+    pass: String,
+}
+
+impl Passline {
+    pub fn new(name: String, pass: String) -> Self {
+        Self { name, pass }
+    }
+
+    pub fn print(&self) {
+        println!("");
+        println!("Name: {}", self.name);
+        println!("Pass: {}", self.pass);
+    }
+
+    pub fn format(&self) -> String {
+        String::from(format!("{0}: {1}\n", self.name, self.pass))
+    }
+}
+
 fn main() -> std::io::Result<()> {
     let args = Args::parse();
     let gen = PassGenerator::new(&args);
@@ -45,14 +67,13 @@ fn main() -> std::io::Result<()> {
         println!("Pass: {}", password);
 
         if !re_generate() {
-            pass_file.write_pass(&args.name, &password)?;
             break;
         }
     }
 
-    println!("");
-    println!("Name: {}", args.name);
-    println!("Pass: {}", password);
+    let pass_line = Passline::new(args.name, password);
+    pass_file.write_pass(&pass_line)?;
+    pass_line.print();
 
     Ok(())
 }
