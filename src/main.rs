@@ -1,3 +1,5 @@
+use std::process;
+
 use crate::{passfile::PassFile, passgen::PassGenerator};
 use args::Args;
 use clap::Parser;
@@ -10,8 +12,15 @@ mod passline;
 
 fn main() -> std::io::Result<()> {
     let args = Args::parse();
-    let gen = PassGenerator::new(&args);
     let pass_file = PassFile::new();
+
+    if pass_file.pass_line_exist(&args.name)? {
+        if !want_to_update(&args.name) {
+            process::exit(0);
+        }
+    }
+
+    let gen = PassGenerator::new(&args);
 
     let mut password;
     loop {
@@ -20,7 +29,7 @@ fn main() -> std::io::Result<()> {
         println!("");
         println!("Pass: {}", password);
 
-        if !re_generate() {
+        if !want_to_re_generate() {
             break;
         }
     }
@@ -34,10 +43,22 @@ fn main() -> std::io::Result<()> {
 
 // Utils
 
-fn re_generate() -> bool {
+fn want_to_re_generate() -> bool {
     println!("");
     println!("Re-Generate password [Y / N] ?");
 
+    ask_yes_or_no()
+}
+
+fn want_to_update(name: &String) -> bool {
+    println!("");
+    println!("{} already exist!!", name);
+    println!("Do you want to update it [Y / N] ?");
+
+    ask_yes_or_no()
+}
+
+fn ask_yes_or_no() -> bool {
     let mut answer = String::new();
 
     std::io::stdin()
