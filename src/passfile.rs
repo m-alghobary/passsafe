@@ -28,6 +28,10 @@ impl PassFile {
         Ok(())
     }
 
+    pub fn update_pass(&self, pass_line: &Passline) -> std::io::Result<()> {
+        todo!()
+    }
+
     pub fn pass_line_exist(&self, pass_name: &String) -> std::io::Result<bool> {
         let path = Path::new(&self.path);
 
