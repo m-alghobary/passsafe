@@ -42,7 +42,8 @@ impl PassFile {
         let mut new_content = String::new();
         for line in old_content.lines() {
             if line.starts_with(&format!("{}: ", pass_line.name)) {
-                new_content = old_content.replace(line, pass_line.format().as_str());
+                new_content =
+                    old_content.replace(&format!("{}\n", line), pass_line.format().as_str());
                 break;
             }
         }
