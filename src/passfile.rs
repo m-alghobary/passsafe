@@ -1,6 +1,6 @@
 use std::{
     fs::OpenOptions,
-    io::{BufRead, Write},
+    io::{BufRead, Read, Seek, SeekFrom, Write},
     path::Path,
 };
 
@@ -29,7 +29,29 @@ impl PassFile {
     }
 
     pub fn update_pass(&self, pass_line: &Passline) -> std::io::Result<()> {
-        todo!()
+        let path = Path::new(&self.path);
+        let mut file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(path)?;
+
+        let mut old_content = String::new();
+        file.read_to_string(&mut old_content)?;
+
+        let mut new_content = String::new();
+        for line in old_content.lines() {
+            if line.starts_with(&format!("{}: ", pass_line.name)) {
+                new_content = old_content.replace(line, pass_line.format().as_str());
+                break;
+            }
+        }
+
+        // overwrite old content
+        file.seek(SeekFrom::Start(0))?;
+        file.write(&new_content.as_bytes())?;
+
+        Ok(())
     }
 
     pub fn pass_line_exist(&self, pass_name: &String) -> std::io::Result<bool> {
