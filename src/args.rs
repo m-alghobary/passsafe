@@ -1,29 +1,37 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
 /// Generate & store your passwords safely
-#[derive(Parser, Debug, Default)]
+#[derive(Parser, Debug)]
 pub struct Args {
-    /// Name of the app this password is for
-    #[clap(short, long, value_parser)]
-    pub name: String,
+    #[clap(subcommand)]
+    pub command: Option<Commands>,
+}
 
-    /// The length of the password
-    #[clap(short, long, value_parser, default_value_t = 8)]
-    pub len: usize,
+#[derive(Subcommand, Debug)]
+pub enum Commands {
+    Add {
+        /// Name of the app this password is for
+        #[clap(short, long, value_parser)]
+        name: String,
 
-    /// No uppercase letters
-    #[clap(long, value_parser)]
-    pub no_upper: bool,
+        /// The length of the password
+        #[clap(short, long, value_parser, default_value_t = 8)]
+        len: usize,
 
-    /// No lowercase letters
-    #[clap(long, value_parser)]
-    pub no_lower: bool,
+        /// No uppercase letters
+        #[clap(long, value_parser)]
+        no_upper: bool,
 
-    /// No numbers
-    #[clap(long, value_parser)]
-    pub no_numbers: bool,
+        /// No lowercase letters
+        #[clap(long, value_parser)]
+        no_lower: bool,
 
-    /// No special chartactors
-    #[clap(long, value_parser)]
-    pub no_special_chars: bool,
+        /// No numbers
+        #[clap(long, value_parser)]
+        no_numbers: bool,
+
+        /// No special chartactors
+        #[clap(long, value_parser)]
+        no_special_chars: bool,
+    },
 }
