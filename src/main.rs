@@ -9,6 +9,7 @@ mod args;
 mod passfile;
 mod passgen;
 mod passline;
+mod utils;
 
 fn main() -> std::io::Result<()> {
     let args = Args::parse();
@@ -16,7 +17,7 @@ fn main() -> std::io::Result<()> {
 
     let mut update_pass_line = false;
     if pass_file.pass_line_exist(&args.name)? {
-        if !want_to_update(&args.name) {
+        if !utils::want_to_update(&args.name) {
             process::exit(0);
         }
 
@@ -32,7 +33,7 @@ fn main() -> std::io::Result<()> {
         println!("");
         println!("Pass: {}", password);
 
-        if !want_to_re_generate() {
+        if !utils::want_to_re_generate() {
             break;
         }
     }
@@ -48,31 +49,4 @@ fn main() -> std::io::Result<()> {
     pass_line.print();
 
     Ok(())
-}
-
-// Utils
-
-fn want_to_re_generate() -> bool {
-    println!("");
-    println!("Re-Generate password [Y / N] ?");
-
-    ask_yes_or_no()
-}
-
-fn want_to_update(name: &String) -> bool {
-    println!("");
-    println!("{} already exist!!", name);
-    println!("Do you want to update it [Y / N] ?");
-
-    ask_yes_or_no()
-}
-
-fn ask_yes_or_no() -> bool {
-    let mut answer = String::new();
-
-    std::io::stdin()
-        .read_line(&mut answer)
-        .expect("Failed to read input!");
-
-    answer.trim().to_lowercase().eq("y")
 }
