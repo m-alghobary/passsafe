@@ -2,8 +2,6 @@ use rand::distributions::Uniform;
 use rand::rngs::StdRng;
 use rand::{Rng, RngCore, SeedableRng};
 
-use crate::Args;
-
 pub struct PassGenerator {
     len: usize,
     use_upper: bool,
@@ -13,14 +11,34 @@ pub struct PassGenerator {
 }
 
 impl PassGenerator {
-    pub fn new(args: &Args) -> Self {
+    pub fn new(len: usize) -> Self {
         Self {
-            len: args.len,
-            use_upper: args.no_upper,
-            use_lower: args.no_lower,
-            use_numbers: args.no_numbers,
-            use_special_chars: args.no_special_chars,
+            len,
+            use_upper: false,
+            use_lower: false,
+            use_numbers: false,
+            use_special_chars: false,
         }
+    }
+
+    pub fn use_upper(&mut self, value: bool) -> &mut Self {
+        self.use_upper = value;
+        self
+    }
+
+    pub fn use_lower(&mut self, value: bool) -> &mut Self {
+        self.use_lower = value;
+        self
+    }
+
+    pub fn use_numbers(&mut self, value: bool) -> &mut Self {
+        self.use_numbers = value;
+        self
+    }
+
+    pub fn use_special_chars(&mut self, value: bool) -> &mut Self {
+        self.use_special_chars = value;
+        self
     }
 
     pub fn gen_password(&self) -> String {
@@ -42,25 +60,25 @@ impl PassGenerator {
     fn get_letter_space(&self) -> Vec<char> {
         let mut letters: Vec<char> = vec![];
 
-        if !self.use_lower {
+        if self.use_lower {
             for ch in 'a' as u8..'z' as u8 + 1 {
                 letters.push(ch as char);
             }
         }
 
-        if !self.use_upper {
+        if self.use_upper {
             for ch in 'A' as u8..'Z' as u8 + 1 {
                 letters.push(ch as char);
             }
         }
 
-        if !self.use_numbers {
+        if self.use_numbers {
             for n in '0' as u8..'9' as u8 + 1 {
                 letters.push(n as char);
             }
         }
 
-        if !self.use_special_chars {
+        if self.use_special_chars {
             let mut special_chars = vec![
                 '!', '#', '$', '%', '&', '*', ']', '[', '(', ')', '{', '}', '+', '-',
             ];
