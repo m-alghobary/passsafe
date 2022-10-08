@@ -44,6 +44,8 @@ fn handle_command(command: Commands) -> io::Result<()> {
             no_numbers,
             no_special_chars,
         })?,
+
+        _ => eprintln!("Please supply a valid command!"),
     }
 
     Ok(())

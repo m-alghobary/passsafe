@@ -9,6 +9,7 @@ pub struct Args {
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
+    /// Add new password or update an existing one
     Add {
         /// Name of the app this password is for
         #[clap(short, long, value_parser)]
@@ -33,5 +34,12 @@ pub enum Commands {
         /// No special chartactors
         #[clap(long, value_parser)]
         no_special_chars: bool,
+    },
+
+    /// List all stored passwords
+    List {
+        /// Show passwords in plaun text
+        #[clap(long, short, value_parser)]
+        show_password: bool,
     },
 }
