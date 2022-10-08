@@ -2,7 +2,7 @@ use std::io;
 
 use args::{Args, Commands};
 use clap::Parser;
-use handlers::add_handler::*;
+use handlers::{add_handler::*, list_handler::*};
 use passline::Passline;
 
 mod args;
@@ -43,10 +43,8 @@ fn handle_command(command: Commands) -> io::Result<()> {
             no_lower,
             no_numbers,
             no_special_chars,
-        })?,
+        }),
 
-        _ => eprintln!("Please supply a valid command!"),
+        Commands::List { show_password } => ListHandler::handle(ListOptions { show_password }),
     }
-
-    Ok(())
 }

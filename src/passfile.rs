@@ -77,4 +77,27 @@ impl PassFile {
 
         Ok(exist)
     }
+
+    pub fn get_pass_lines(&self) -> std::io::Result<Vec<Passline>> {
+        let path = Path::new(&self.path);
+
+        let pass_file = std::fs::File::open(path)?;
+        let file_reader = std::io::BufReader::new(pass_file);
+
+        let result: Vec<Passline> = file_reader
+            .lines()
+            .into_iter()
+            .map(|line| {
+                let line = line.unwrap_or_default();
+
+                let mut parts = line.split(":");
+                let name = parts.next().unwrap_or_default().trim().to_string();
+                let pass = parts.next().unwrap_or_default().trim().to_string();
+
+                Passline::new(name, pass)
+            })
+            .collect();
+
+        Ok(result)
+    }
 }
