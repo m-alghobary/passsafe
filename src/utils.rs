@@ -1,5 +1,4 @@
 pub fn want_to_re_generate() -> bool {
-    println!("");
     println!("Re-Generate password [Y / N] ?");
 
     ask_yes_or_no()
@@ -7,7 +6,7 @@ pub fn want_to_re_generate() -> bool {
 
 pub fn want_to_update(name: &String) -> bool {
     println!("");
-    println!("{} already exist!!", name);
+    println!("[{}] already exist!!", name);
     println!("Do you want to update it [Y / N] ?");
 
     ask_yes_or_no()
