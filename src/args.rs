@@ -42,4 +42,11 @@ pub enum Commands {
         #[clap(long, short, value_parser)]
         show_password: bool,
     },
+
+    /// Show one spesific password by name
+    Show {
+        /// The name of the password to show
+        #[clap(long, short, value_parser)]
+        name: String,
+    },
 }
