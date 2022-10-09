@@ -55,6 +55,23 @@ impl PassFile {
         Ok(())
     }
 
+    pub fn get_pass_line(&self, pass_name: &String) -> std::io::Result<Option<Passline>> {
+        let path = Path::new(&self.path);
+
+        let pass_file = std::fs::File::open(path)?;
+        let file_reader = std::io::BufReader::new(pass_file);
+
+        for line in file_reader.lines() {
+            let line = line.unwrap_or_default();
+
+            if line.starts_with(pass_name) {
+                return Ok(Some(self.parse_pass_line(line)));
+            }
+        }
+
+        Ok(None)
+    }
+
     pub fn pass_line_exist(&self, pass_name: &String) -> std::io::Result<bool> {
         let path = Path::new(&self.path);
 
@@ -89,15 +106,18 @@ impl PassFile {
             .into_iter()
             .map(|line| {
                 let line = line.unwrap_or_default();
-
-                let mut parts = line.split(":");
-                let name = parts.next().unwrap_or_default().trim().to_string();
-                let pass = parts.next().unwrap_or_default().trim().to_string();
-
-                Passline::new(name, pass)
+                self.parse_pass_line(line)
             })
             .collect();
 
         Ok(result)
+    }
+
+    fn parse_pass_line(&self, line: String) -> Passline {
+        let mut parts = line.split(":");
+        let name = parts.next().unwrap_or_default().trim().to_string();
+        let pass = parts.next().unwrap_or_default().trim().to_string();
+
+        Passline::new(name, pass)
     }
 }
