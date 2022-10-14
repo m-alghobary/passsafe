@@ -49,4 +49,11 @@ pub enum Commands {
         #[clap(long, short, value_parser)]
         name: String,
     },
+
+    /// Delete one spesific password by name
+    Delete {
+        /// The name of the password to delete
+        #[clap(long, short, value_parser)]
+        name: String,
+    },
 }

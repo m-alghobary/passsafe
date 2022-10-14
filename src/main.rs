@@ -48,5 +48,6 @@ fn handle_command(command: Commands) -> io::Result<()> {
         Commands::List { show_password } => ListHandler::handle(ListOptions { show_password }),
 
         Commands::Show { name } => ShowHandler::handle(ShowOptions { name }),
+        Commands::Delete { name } => todo!(),
     }
 }
