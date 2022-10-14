@@ -1,5 +1,5 @@
 use std::{
-    fs::OpenOptions,
+    fs::{File, OpenOptions},
     io::{BufRead, Read, Seek, SeekFrom, Write},
     path::Path,
 };
@@ -29,12 +29,7 @@ impl PassFile {
     }
 
     pub fn update_pass(&self, pass_line: &Passline) -> std::io::Result<()> {
-        let path = Path::new(&self.path);
-        let mut file = OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .open(path)?;
+        let mut file = self.open_to_write()?;
 
         let mut old_content = String::new();
         file.read_to_string(&mut old_content)?;
@@ -73,12 +68,7 @@ impl PassFile {
     }
 
     pub fn delete_pass_line(&self, pass_name: &String) -> std::io::Result<bool> {
-        let path = Path::new(&self.path);
-        let mut file = OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .open(path)?;
+        let mut file = self.open_to_write()?;
 
         let mut old_content = String::new();
         file.read_to_string(&mut old_content)?;
@@ -138,6 +128,16 @@ impl PassFile {
             .collect();
 
         Ok(result)
+    }
+
+    fn open_to_write(&self) -> std::io::Result<File> {
+        let path = Path::new(&self.path);
+
+        OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(path)
     }
 
     fn parse_pass_line(&self, line: String) -> Passline {
