@@ -43,10 +43,7 @@ impl PassFile {
             }
         }
 
-        // overwrite old content
-        file.seek(SeekFrom::Start(0))?;
-        file.write(&new_content.as_bytes())?;
-
+        self.overwrite_content(&mut file, &new_content)?;
         Ok(())
     }
 
@@ -81,11 +78,7 @@ impl PassFile {
             }
         }
 
-        // overwrite old content
-        file.seek(SeekFrom::Start(0))?;
-        file.set_len(new_content.len() as u64)?;
-        assert_eq!(file.write(&new_content.as_bytes())?, new_content.len());
-
+        self.overwrite_content(&mut file, &new_content)?;
         Ok(true)
     }
 
@@ -128,6 +121,14 @@ impl PassFile {
             .collect();
 
         Ok(result)
+    }
+
+    fn overwrite_content(&self, file: &mut File, new_content: &String) -> std::io::Result<()> {
+        file.seek(SeekFrom::Start(0))?;
+        file.set_len(new_content.len() as u64)?;
+        assert_eq!(file.write(&new_content.as_bytes())?, new_content.len());
+
+        Ok(())
     }
 
     fn open_to_write(&self) -> std::io::Result<File> {
