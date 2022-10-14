@@ -9,7 +9,7 @@
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceRoot}/target/debug/passsafe.exe",
-            "args": ["-n", "face"],
+            "args": ["delete", "-n", "face"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

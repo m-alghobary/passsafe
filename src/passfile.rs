@@ -72,6 +72,33 @@ impl PassFile {
         Ok(None)
     }
 
+    pub fn delete_pass_line(&self, pass_name: &String) -> std::io::Result<bool> {
+        let path = Path::new(&self.path);
+        let mut file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(path)?;
+
+        let mut old_content = String::new();
+        file.read_to_string(&mut old_content)?;
+
+        let mut new_content = String::new();
+        for line in old_content.lines() {
+            if line.starts_with(&format!("{}: ", pass_name)) {
+                new_content = old_content.replace(&format!("{}\n", line), "");
+                break;
+            }
+        }
+
+        // overwrite old content
+        file.seek(SeekFrom::Start(0))?;
+        file.set_len(new_content.len() as u64)?;
+        assert_eq!(file.write(&new_content.as_bytes())?, new_content.len());
+
+        Ok(true)
+    }
+
     pub fn pass_line_exist(&self, pass_name: &String) -> std::io::Result<bool> {
         let path = Path::new(&self.path);
 
